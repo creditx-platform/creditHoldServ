@@ -3,8 +3,11 @@ package com.creditx.hold.service.impl;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
+
+import lombok.extern.slf4j.Slf4j;
 
 import com.creditx.hold.dto.CreateHoldRequest;
 import com.creditx.hold.dto.CreateHoldResponse;
@@ -19,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 
 @Service
+@Slf4j
 public class HoldServiceImpl implements HoldService {
 
     private final HoldRepository holdRepository;
@@ -99,6 +103,52 @@ public class HoldServiceImpl implements HoldService {
         }
     }
 
+    @Override
+    @Transactional
+    public void expireHolds() {
+        Instant currentTime = Instant.now();
+        List<Hold> expiredHolds = holdRepository.findExpiredHolds(HoldStatus.AUTHORIZED, currentTime);
+        
+        log.info("Found {} expired holds to process", expiredHolds.size());
+        
+        for (Hold hold : expiredHolds) {
+            try {
+                // Update hold status to EXPIRED
+                hold.setStatus(HoldStatus.EXPIRED);
+                holdRepository.save(hold);
+                
+                // Publish hold.expired outbox event
+                recordHoldExpiredEvent(hold);
+                
+                log.info("Successfully expired hold with ID: {}", hold.getHoldId());
+            } catch (Exception e) {
+                log.error("Failed to expire hold with ID: {}", hold.getHoldId(), e);
+            }
+        }
+    }
+
+    private void recordHoldExpiredEvent(Hold hold) {
+        var payload = new HoldExpiredPayload(
+                hold.getHoldId(),
+                hold.getTransactionId(),
+                hold.getAccountId(),
+                hold.getAmount(),
+                hold.getStatus().toString(),
+                hold.getExpiresAt()
+        );
+
+        try {
+            outboxEventService.saveEvent(
+                    "hold.expired",
+                    hold.getHoldId(),
+                    objectMapper.writeValueAsString(payload)
+            );
+            log.debug("Created hold.expired outbox event for hold ID: {}", hold.getHoldId());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to serialize hold expired event payload", e);
+        }
+    }
+
     // Simple record for JSON serialization
     private record HoldCreatedPayload(
             Long holdId,
@@ -107,6 +157,16 @@ public class HoldServiceImpl implements HoldService {
             Long merchantAccountId,
             BigDecimal amount,
             String currency,
+            String status,
+            Instant expiresAt
+    ) {}
+
+    // Simple record for JSON serialization
+    private record HoldExpiredPayload(
+            Long holdId,
+            Long transactionId,
+            Long accountId,
+            BigDecimal amount,
             String status,
             Instant expiresAt
     ) {}

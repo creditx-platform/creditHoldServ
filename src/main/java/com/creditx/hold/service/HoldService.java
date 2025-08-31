@@ -5,4 +5,6 @@ import com.creditx.hold.dto.CreateHoldResponse;
 
 public interface HoldService {
     CreateHoldResponse createHold(CreateHoldRequest request);
+    
+    void expireHolds();
 }
