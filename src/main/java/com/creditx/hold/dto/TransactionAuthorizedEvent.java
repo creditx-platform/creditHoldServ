@@ -2,6 +2,7 @@ package com.creditx.hold.dto;
 
 import java.math.BigDecimal;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,11 +13,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionAuthorizedEvent {
+    @NotNull
     private Long transactionId;
+    @NotNull
     private Long holdId;
+    @NotNull
     private Long issuerAccountId;
+    @NotNull
     private Long merchantAccountId;
+    @NotNull
     private BigDecimal amount;
+    @NotNull
     private String currency;
     private String status;
 }
