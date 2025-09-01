@@ -1,19 +1,22 @@
-{
-    "properties": [
-        {
-            "name": "app.outbox.batch-size",
-            "type": "java.lang.String",
-            "description": "Outbox batch size"
-        },
-        {
-            "name": "app.outbox.publish-interval",
-            "type": "java.lang.String",
-            "description": "Outbox publish interval"
-        },
-        {
-            "name": "app.outbox.binding",
-            "type": "java.lang.String",
-            "description": "Kafka topic name abstracted as Outbox binding name"
-        }
-    ]
-}
+{"properties": [
+  {
+    "name": "app.outbox.batch-size",
+    "type": "java.lang.String",
+    "description": "Outbox batch size"
+  },
+  {
+    "name": "app.outbox.publish-interval",
+    "type": "java.lang.String",
+    "description": "Outbox publish interval"
+  },
+  {
+    "name": "app.outbox.binding",
+    "type": "java.lang.String",
+    "description": "Kafka topic name abstracted as Outbox binding name"
+  },
+  {
+    "name": "app.hold.expiry-check-interval",
+    "type": "java.lang.String",
+    "description": "Frequency of hold expiry checking'"
+  }
+]}
