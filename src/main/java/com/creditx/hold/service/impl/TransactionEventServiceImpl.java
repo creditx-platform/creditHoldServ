@@ -10,6 +10,7 @@ import com.creditx.hold.model.HoldStatus;
 import com.creditx.hold.repository.HoldRepository;
 import com.creditx.hold.service.ProcessedEventService;
 import com.creditx.hold.service.TransactionEventService;
+import com.creditx.hold.tracing.TransactionSpanTagger;
 import com.creditx.hold.util.EventIdGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,11 +27,15 @@ public class TransactionEventServiceImpl implements TransactionEventService {
     private final HoldRepository holdRepository;
     private final ProcessedEventService processedEventService;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final TransactionSpanTagger transactionSpanTagger;
 
     @Override
     @Transactional
     public void processTransactionAuthorized(TransactionAuthorizedEvent event) {
-        // Generate unique event ID for deduplication
+    // Tag current span for trace correlation
+    transactionSpanTagger.tagTransactionId(event.getTransactionId());
+
+    // Generate unique event ID for deduplication
         String eventId = EventIdGenerator.generateEventId("transaction.authorized", event.getTransactionId());
         
         // Check if event has already been processed
@@ -77,7 +82,10 @@ public class TransactionEventServiceImpl implements TransactionEventService {
     @Override
     @Transactional
     public void processTransactionPosted(TransactionPostedEvent event) {
-        // Generate unique event ID for deduplication
+    // Tag current span for trace correlation
+    transactionSpanTagger.tagTransactionId(event.getTransactionId());
+
+    // Generate unique event ID for deduplication
         String eventId = EventIdGenerator.generateEventId("transaction.posted", event.getTransactionId());
         
         // Check if event has already been processed
@@ -129,7 +137,10 @@ public class TransactionEventServiceImpl implements TransactionEventService {
     @Override
     @Transactional
     public void processTransactionFailed(TransactionFailedEvent event) {
-        // Generate unique event ID for deduplication
+    // Tag current span for trace correlation
+    transactionSpanTagger.tagTransactionId(event.getTransactionId());
+
+    // Generate unique event ID for deduplication
         String eventId = EventIdGenerator.generateEventId("transaction.failed", event.getTransactionId());
         
         // Check if event has already been processed

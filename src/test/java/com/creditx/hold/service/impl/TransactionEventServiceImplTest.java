@@ -29,6 +29,7 @@ import com.creditx.hold.model.HoldStatus;
 import com.creditx.hold.repository.HoldRepository;
 import com.creditx.hold.service.ProcessedEventService;
 import com.creditx.hold.util.EventIdGenerator;
+import com.creditx.hold.tracing.TransactionSpanTagger;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionEventServiceImplTest {
@@ -41,6 +42,9 @@ class TransactionEventServiceImplTest {
 
     @InjectMocks
     private TransactionEventServiceImpl transactionEventService;
+
+    @Mock
+    private TransactionSpanTagger transactionSpanTagger;
 
     @Test
     void shouldProcessTransactionAuthorizedEvent() {
@@ -64,6 +68,7 @@ class TransactionEventServiceImplTest {
             transactionEventService.processTransactionAuthorized(event);
 
             // then
+            verify(transactionSpanTagger, times(1)).tagTransactionId(123L);
             verify(processedEventService, times(1)).isEventProcessed(eventId);
             verify(processedEventService, times(1)).isPayloadProcessed(payloadHash);
             verify(processedEventService, times(1)).markEventAsProcessed(eventId, payloadHash, "SUCCESS");
@@ -92,6 +97,7 @@ class TransactionEventServiceImplTest {
             transactionEventService.processTransactionAuthorized(event);
 
             // then
+            verify(transactionSpanTagger, times(1)).tagTransactionId(123L);
             verify(processedEventService, times(1)).isEventProcessed(eventId);
             verify(processedEventService, never()).isPayloadProcessed(anyString());
             verify(processedEventService, never()).markEventAsProcessed(anyString(), anyString(), anyString());
@@ -119,6 +125,7 @@ class TransactionEventServiceImplTest {
             transactionEventService.processTransactionAuthorized(event);
 
             // then
+            verify(transactionSpanTagger, times(1)).tagTransactionId(123L);
             verify(processedEventService, times(1)).isEventProcessed(eventId);
             verify(processedEventService, times(1)).isPayloadProcessed(payloadHash);
             verify(processedEventService, never()).markEventAsProcessed(anyString(), anyString(), anyString());
@@ -174,6 +181,7 @@ class TransactionEventServiceImplTest {
             transactionEventService.processTransactionPosted(event);
 
             // then
+            verify(transactionSpanTagger, times(1)).tagTransactionId(123L);
             verify(processedEventService, times(1)).isEventProcessed(eventId);
             verify(processedEventService, times(1)).isPayloadProcessed(payloadHash);
             verify(processedEventService, times(1)).markEventAsProcessed(eventId, payloadHash, "SUCCESS");
@@ -236,8 +244,10 @@ class TransactionEventServiceImplTest {
             transactionEventService.processTransactionFailed(event);
 
             // then
+            verify(transactionSpanTagger, times(1)).tagTransactionId(123L);
             verify(processedEventService, times(1)).isEventProcessed(eventId);
             verify(processedEventService, times(1)).isPayloadProcessed(payloadHash);
+            verify(transactionSpanTagger, times(1)).tagTransactionId(123L);
             verify(processedEventService, times(1)).markEventAsProcessed(eventId, payloadHash, "SUCCESS");
             
             ArgumentCaptor<Hold> holdCaptor = ArgumentCaptor.forClass(Hold.class);
@@ -270,6 +280,7 @@ class TransactionEventServiceImplTest {
             transactionEventService.processTransactionFailed(event);
 
             // then
+            verify(transactionSpanTagger, times(1)).tagTransactionId(123L);
             verify(processedEventService, times(1)).markEventAsProcessed(eventId, payloadHash, "SUCCESS");
             verify(holdRepository, never()).save(any());
             assertThat(hold.getStatus()).isEqualTo(HoldStatus.VOIDED);
@@ -298,6 +309,7 @@ class TransactionEventServiceImplTest {
             transactionEventService.processTransactionFailed(event);
 
             // then
+            verify(transactionSpanTagger, times(1)).tagTransactionId(123L);
             verify(processedEventService, times(1)).markEventAsProcessed(eventId, payloadHash, "SUCCESS");
             verify(holdRepository, never()).save(any());
             assertThat(hold.getStatus()).isEqualTo(HoldStatus.EXPIRED);
@@ -327,6 +339,7 @@ class TransactionEventServiceImplTest {
                     .isInstanceOf(RuntimeException.class)
                     .hasMessage("Database error");
 
+            verify(transactionSpanTagger, times(1)).tagTransactionId(123L);
             verify(processedEventService, times(1)).markEventAsProcessed(eventId, "", "FAILED");
         }
     }
@@ -350,6 +363,7 @@ class TransactionEventServiceImplTest {
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("Hash generation failed");            verify(processedEventService, times(1)).isEventProcessed(eventId);
             verify(processedEventService, never()).isPayloadProcessed(anyString());
+            verify(transactionSpanTagger, times(1)).tagTransactionId(123L);
             verify(processedEventService, times(1)).markEventAsProcessed(eventId, "", "FAILED");
             verify(holdRepository, never()).findById(any());
         }

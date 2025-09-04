@@ -3,6 +3,7 @@ package com.creditx.hold.messaging;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,6 +27,7 @@ import com.creditx.hold.service.TransactionEventService;
 import com.creditx.hold.constants.EventTypes;
 import com.creditx.hold.util.EventValidationUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.creditx.hold.tracing.TransactionSpanTagger;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionEventListenerTest {
@@ -36,6 +38,9 @@ class TransactionEventListenerTest {
     @Mock
     private ObjectMapper objectMapper;
 
+    @Mock
+    private TransactionSpanTagger transactionSpanTagger;
+
     private TransactionEventListener transactionEventListener;
 
     private Consumer<Message<String>> transactionAuthorizedConsumer;
@@ -44,7 +49,7 @@ class TransactionEventListenerTest {
 
     @BeforeEach
     void setUp() {
-        transactionEventListener = new TransactionEventListener(transactionEventService, objectMapper);
+    transactionEventListener = new TransactionEventListener(transactionEventService, transactionSpanTagger, objectMapper);
         transactionAuthorizedConsumer = transactionEventListener.transactionAuthorized();
         transactionPostedConsumer = transactionEventListener.transactionPosted();
         transactionFailedConsumer = transactionEventListener.transactionFailed();
@@ -75,6 +80,8 @@ class TransactionEventListenerTest {
 
             // then
             verify(transactionEventService, times(1)).processTransactionAuthorized(event);
+            // Tagger should receive tag call
+            verify(transactionSpanTagger, times(1)).tagTransactionId(123L);
         }
     }
 
@@ -103,6 +110,8 @@ class TransactionEventListenerTest {
 
             // then
             verify(transactionEventService, never()).processTransactionAuthorized(event);
+            // Tag still added because transactionId present
+            verify(transactionSpanTagger, times(1)).tagTransactionId(123L);
         }
     }
 
@@ -131,6 +140,7 @@ class TransactionEventListenerTest {
 
             // then
             verify(transactionEventService, times(1)).processTransactionPosted(event);
+            verify(transactionSpanTagger, times(1)).tagTransactionId(123L);
         }
     }
 
@@ -159,6 +169,7 @@ class TransactionEventListenerTest {
 
             // then
             verify(transactionEventService, times(1)).processTransactionFailed(event);
+            verify(transactionSpanTagger, times(1)).tagTransactionId(123L);
         }
     }
 
@@ -182,6 +193,7 @@ class TransactionEventListenerTest {
             // then
             verify(transactionEventService, never()).processTransactionAuthorized(any());
             verify(objectMapper, never()).readValue(any(String.class), any(Class.class));
+            verifyNoInteractions(transactionSpanTagger);
         }
     }
 
@@ -206,6 +218,8 @@ class TransactionEventListenerTest {
             assertThrows(RuntimeException.class, () -> transactionAuthorizedConsumer.accept(message));
 
             verify(transactionEventService, never()).processTransactionAuthorized(any());
+            // Tagger not invoked because JSON parsing failed before tag call
+            verifyNoInteractions(transactionSpanTagger);
         }
     }
 }

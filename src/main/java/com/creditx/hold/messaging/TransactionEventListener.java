@@ -9,6 +9,7 @@ import com.creditx.hold.dto.TransactionAuthorizedEvent;
 import com.creditx.hold.dto.TransactionPostedEvent;
 import com.creditx.hold.dto.TransactionFailedEvent;
 import com.creditx.hold.service.TransactionEventService;
+import com.creditx.hold.tracing.TransactionSpanTagger;
 import com.creditx.hold.util.EventValidationUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -23,6 +24,7 @@ import java.util.function.Consumer;
 public class TransactionEventListener {
 
     private final TransactionEventService transactionEventService;
+    private final TransactionSpanTagger transactionSpanTagger;
     private final ObjectMapper objectMapper;
 
     @Bean
@@ -40,6 +42,7 @@ public class TransactionEventListener {
             try {
                 log.info("Received transaction.authorized event: {}", payload);
                 TransactionAuthorizedEvent event = objectMapper.readValue(payload, TransactionAuthorizedEvent.class);
+                transactionSpanTagger.tagTransactionId(event.getTransactionId());
 
                 // Validate that the event has a holdId - skip events without holdId
                 if (event.getHoldId() == null) {
@@ -72,6 +75,7 @@ public class TransactionEventListener {
             try {
                 log.info("Received transaction.posted event: {}", payload);
                 TransactionPostedEvent event = objectMapper.readValue(payload, TransactionPostedEvent.class);
+                transactionSpanTagger.tagTransactionId(event.getTransactionId());
 
                 // Validate that the event has a holdId
                 if (event.getHoldId() == null) {
@@ -104,6 +108,7 @@ public class TransactionEventListener {
             try {
                 log.info("Received transaction.failed event: {}", payload);
                 TransactionFailedEvent event = objectMapper.readValue(payload, TransactionFailedEvent.class);
+                transactionSpanTagger.tagTransactionId(event.getTransactionId());
 
                 // Validate that the event has a holdId
                 if (event.getHoldId() == null) {
