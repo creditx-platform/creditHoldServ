@@ -14,22 +14,29 @@ import com.creditx.hold.dto.CreateHoldResponse;
 import com.creditx.hold.service.HoldService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/holds")
 @RequiredArgsConstructor
+@Slf4j
 public class HoldController {
     
     private final HoldService holdService;
     
     @PostMapping
     public ResponseEntity<CreateHoldResponse> createHold(@Validated @RequestBody CreateHoldRequest request) {
+        log.info("Creating hold for transaction: {}, issuer: {}, merchant: {}, amount: {}", 
+                request.getTransactionId(), request.getIssuerAccountId(), 
+                request.getMerchantAccountId(), request.getAmount());
         var response = holdService.createHold(request);
+        log.info("Hold created with ID: {}, status: {}", response.getHoldId(), response.getStatus());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
+        log.error("Invalid request: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }
