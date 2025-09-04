@@ -45,7 +45,7 @@ class HoldControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/holds")
+    mockMvc.perform(post("/api/holds")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isCreated())
@@ -64,7 +64,7 @@ class HoldControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/holds")
+    mockMvc.perform(post("/api/holds")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isBadRequest());
@@ -81,7 +81,7 @@ class HoldControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/holds")
+    mockMvc.perform(post("/api/holds")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isBadRequest());
@@ -98,7 +98,7 @@ class HoldControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/holds")
+    mockMvc.perform(post("/api/holds")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isBadRequest());
@@ -115,7 +115,7 @@ class HoldControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/holds")
+    mockMvc.perform(post("/api/holds")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isBadRequest());
@@ -133,7 +133,7 @@ class HoldControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/holds")
+    mockMvc.perform(post("/api/holds")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isBadRequest());
@@ -151,7 +151,7 @@ class HoldControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/holds")
+    mockMvc.perform(post("/api/holds")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isBadRequest());
@@ -169,7 +169,7 @@ class HoldControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/holds")
+    mockMvc.perform(post("/api/holds")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isBadRequest());
@@ -187,7 +187,7 @@ class HoldControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/holds")
+    mockMvc.perform(post("/api/holds")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isBadRequest());
@@ -208,7 +208,7 @@ class HoldControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/holds")
+    mockMvc.perform(post("/api/holds")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isBadRequest())
@@ -230,7 +230,7 @@ class HoldControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/holds")
+    mockMvc.perform(post("/api/holds")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isBadRequest())
@@ -252,7 +252,7 @@ class HoldControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/holds")
+    mockMvc.perform(post("/api/holds")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isBadRequest())
@@ -276,7 +276,7 @@ class HoldControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/holds")
+    mockMvc.perform(post("/api/holds")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isCreated())
@@ -302,7 +302,7 @@ class HoldControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/holds")
+    mockMvc.perform(post("/api/holds")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isCreated())
@@ -328,7 +328,7 @@ class HoldControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/holds")
+    mockMvc.perform(post("/api/holds")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isCreated())
@@ -351,7 +351,7 @@ class HoldControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/holds")
+    mockMvc.perform(post("/api/holds")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isBadRequest())
@@ -373,7 +373,7 @@ class HoldControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/holds")
+    mockMvc.perform(post("/api/holds")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isBadRequest())
@@ -395,7 +395,7 @@ class HoldControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/holds")
+    mockMvc.perform(post("/api/holds")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isBadRequest())

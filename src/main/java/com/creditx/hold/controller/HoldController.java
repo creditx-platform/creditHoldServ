@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/holds")
+@RequestMapping("/api/holds")
 @RequiredArgsConstructor
 @Slf4j
 public class HoldController {
