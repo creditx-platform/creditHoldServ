@@ -54,8 +54,8 @@ class OutboxEventPublishingSchedulerTest {
         outboxEventPublishingScheduler.publishPendingEvents();
 
         // then
-        verify(outboxStreamPublisher, times(1)).publish("123", "{\"holdId\":123}");
-        verify(outboxStreamPublisher, times(1)).publish("456", "{\"holdId\":456}");
+        verify(outboxStreamPublisher, times(1)).publish("123", "{\"holdId\":123}", "hold.created");
+        verify(outboxStreamPublisher, times(1)).publish("456", "{\"holdId\":456}", "hold.created");
         verify(outboxEventService, times(1)).markAsPublished(event1);
         verify(outboxEventService, times(1)).markAsPublished(event2);
     }
@@ -69,7 +69,7 @@ class OutboxEventPublishingSchedulerTest {
         outboxEventPublishingScheduler.publishPendingEvents();
 
         // then
-        verify(outboxStreamPublisher, never()).publish(any(), any());
+        verify(outboxStreamPublisher, never()).publish(any(), any(), any());
         verify(outboxEventService, never()).markAsPublished(any());
         verify(outboxEventService, never()).markAsFailed(any());
     }
@@ -81,13 +81,13 @@ class OutboxEventPublishingSchedulerTest {
 
         when(outboxEventService.fetchPendingEvents(10)).thenReturn(Arrays.asList(event));
         doThrow(new RuntimeException("Publishing failed")).when(outboxStreamPublisher)
-                .publish("123", "{\"holdId\":123}");
+                .publish("123", "{\"holdId\":123}", "hold.created");
 
         // when
         outboxEventPublishingScheduler.publishPendingEvents();
 
         // then
-        verify(outboxStreamPublisher, times(1)).publish("123", "{\"holdId\":123}");
+        verify(outboxStreamPublisher, times(1)).publish("123", "{\"holdId\":123}", "hold.created");
         verify(outboxEventService, never()).markAsPublished(event);
         verify(outboxEventService, times(1)).markAsFailed(event);
     }
@@ -96,6 +96,7 @@ class OutboxEventPublishingSchedulerTest {
         return OutboxEvent.builder()
                 .aggregateId(aggregateId)
                 .payload(payload)
+                .eventType("hold.created")
                 .build();
     }
 }

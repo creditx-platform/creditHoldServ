@@ -37,16 +37,18 @@ class OutboxStreamPublisherTest {
         // given
         String key = "hold-123";
         String payload = "{\"holdId\":123, \"status\":\"AUTHORIZED\"}";
+        String eventType = "hold.created";
         ArgumentCaptor<Message<String>> messageCaptor = ArgumentCaptor.forClass(Message.class);
         
         // when
-        outboxStreamPublisher.publish(key, payload);
+        outboxStreamPublisher.publish(key, payload, eventType);
         
         // then
         verify(streamBridge, times(1)).send(eq("hold-events-out"), messageCaptor.capture());
         Message<String> sentMessage = messageCaptor.getValue();
         assertThat(sentMessage.getPayload()).isEqualTo(payload);
         assertThat(sentMessage.getHeaders().get("key")).isEqualTo(key);
+        assertThat(sentMessage.getHeaders().get("eventType")).isEqualTo(eventType);
     }
 
     @Test
@@ -54,9 +56,10 @@ class OutboxStreamPublisherTest {
         // given
         String key = null;
         String payload = "{\"holdId\":123, \"status\":\"AUTHORIZED\"}";
+        String eventType = "hold.created";
         
         // when
-        outboxStreamPublisher.publish(key, payload);
+        outboxStreamPublisher.publish(key, payload, eventType);
         
         // then
         verify(streamBridge, never()).send(anyString(), anyString());
@@ -67,9 +70,24 @@ class OutboxStreamPublisherTest {
         // given
         String key = "hold-123";
         String payload = "";
+        String eventType = "hold.created";
         
         // when
-        outboxStreamPublisher.publish(key, payload);
+        outboxStreamPublisher.publish(key, payload, eventType);
+        
+        // then
+        verify(streamBridge, never()).send(anyString(), anyString());
+    }
+
+    @Test
+    void shouldNotPublishWithoutEventType() {
+        // given
+        String key = "hold-123";
+        String payload = "{\"holdId\":123, \"status\":\"AUTHORIZED\"}";
+        String eventType = "";
+        
+        // when
+        outboxStreamPublisher.publish(key, payload, eventType);
         
         // then
         verify(streamBridge, never()).send(anyString(), anyString());

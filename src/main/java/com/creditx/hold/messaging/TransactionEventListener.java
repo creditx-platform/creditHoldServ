@@ -29,7 +29,6 @@ public class TransactionEventListener {
     public Consumer<Message<String>> transactionAuthorized() {
         return message -> {
             String payload = message.getPayload();
-            String traceId = (String) message.getHeaders().get("X-Trace-Id");
 
             // Validate event type before processing
             if (!EventValidationUtils.validateEventType(message, EventTypes.TRANSACTION_AUTHORIZED)) {
@@ -62,7 +61,6 @@ public class TransactionEventListener {
     public Consumer<Message<String>> transactionPosted() {
         return message -> {
             String payload = message.getPayload();
-            String traceId = (String) message.getHeaders().get("X-Trace-Id");
 
             // Validate event type before processing
             if (!EventValidationUtils.validateEventType(message, EventTypes.TRANSACTION_POSTED)) {
@@ -95,7 +93,6 @@ public class TransactionEventListener {
     public Consumer<Message<String>> transactionFailed() {
         return message -> {
             String payload = message.getPayload();
-            String traceId = (String) message.getHeaders().get("X-Trace-Id");
 
             // Validate event type before processing
             if (!EventValidationUtils.validateEventType(message, EventTypes.TRANSACTION_FAILED)) {
