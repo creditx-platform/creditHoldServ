@@ -13,8 +13,6 @@ public final class EventTypes {
     public static final String TRANSACTION_AUTHORIZED = "transaction.authorized";
     public static final String TRANSACTION_POSTED = "transaction.posted";
     public static final String TRANSACTION_FAILED = "transaction.failed";
-    
-    // Events stored locally in outbox but not published to Kafka
     public static final String TRANSACTION_INITIATED = "transaction.initiated";
     
     // Message header key for event type
