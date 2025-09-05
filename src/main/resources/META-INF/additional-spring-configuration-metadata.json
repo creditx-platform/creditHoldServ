@@ -17,6 +17,11 @@
   {
     "name": "app.hold.expiry-check-interval",
     "type": "java.lang.String",
-    "description": "Frequency of hold expiry checking'"
+    "description": "Frequency of hold expiry checking"
+  },
+  {
+    "name": "api.doc.show-internal",
+    "type": "java.lang.String",
+    "description": "Should show internal api doc?"
   }
 ]}

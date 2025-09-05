@@ -14,6 +14,7 @@ import com.creditx.hold.dto.CreateHoldResponse;
 import com.creditx.hold.service.HoldService;
 
 import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -25,6 +26,7 @@ public class HoldController {
     private final HoldService holdService;
     
     @PostMapping
+    @Operation(summary = "Create a hold", description = "Creates a new hold (authorization) on a payer account", tags = {"internal"})
     public ResponseEntity<CreateHoldResponse> createHold(@Validated @RequestBody CreateHoldRequest request) {
         log.info("Creating hold for transaction: {}, issuer: {}, merchant: {}, amount: {}", 
                 request.getTransactionId(), request.getIssuerAccountId(), 
