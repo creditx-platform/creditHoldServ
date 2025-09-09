@@ -1,15 +1,15 @@
 package com.creditx.hold.service;
 
+import com.creditx.hold.model.OutboxEvent;
 import java.util.List;
 
-import com.creditx.hold.model.OutboxEvent;
-
 public interface OutboxEventService {
-    OutboxEvent saveEvent(String eventType, Long aggregateId, String payload);
 
-    List<OutboxEvent> fetchPendingEvents(int limit);
+  OutboxEvent saveEvent(String eventType, Long aggregateId, String payload);
 
-    void markAsPublished(OutboxEvent event);
+  List<OutboxEvent> fetchPendingEvents(int limit);
 
-    void markAsFailed(OutboxEvent event);
+  void markAsPublished(OutboxEvent event);
+
+  void markAsFailed(OutboxEvent event);
 }
